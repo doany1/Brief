@@ -1,168 +1,287 @@
-# Brief
-It helps you to strengthen your methodology.
+# Brief – Strengthen your pentest methodology. 
 
-## What It Does
-Brief is a CLI tool that records your CTF or lab command history and generates a structured post‑mortem report. It helps you review what you did, spot mistakes, and improve your workflow. The tool can:
-1. Start a recording session and log commands with timestamps.
-2. Append new terminal tabs to the same session log.
-3. Analyze a session log and produce a Markdown + HTML report.
-4. Label commands by terminal so multi‑tab work stays clear.
-5. Provide a readable CLI help and report output for quick review.
+**Strengthen your CTF and pentest methodology by recording, analyzing, and learning from every command you run.**
 
-## Who It Helps
+Brief is a CLI tool that records your terminal activity during CTF challenges or labs, then uses AI to generate a detailed report. Instead of just getting the right answer, you get feedback on *how* you approached the problem—and how to improve next time.
+
+---
+
+##  What It Does
+
+Brief helps you:
+
+1. **Record** – Captures every command you run with timestamps and exit codes
+2. **Organize** – Logs work across multiple terminal tabs with clear labels
+3. **Analyze** – Sends your command history to an AI model for detailed feedback
+4. **Learn** – Generates a mentor-style critique highlighting mistakes, bad habits, and better workflows
+5. **Report** – Produces both Markdown and HTML reports you can review and share
+
+---
+
+##   Who This Is For
+
 Brief is built for:
-1. CTF and lab learners who want feedback on their methodology.
-2. Pen‑testing students who need repeatable workflows.
-3. Anyone who wants a clean, time‑stamped command history and a post‑session summary.
-4. OSCP/CPTS candidates looking to tighten their process under exam pressure.
-5. Self‑taught learners who want mentor‑style feedback without a full course.
 
-## How It Helps
-Brief is especially useful for people building their methodology because it turns messy terminal activity into a clear, reviewable workflow. It helps you:
-1. See the exact sequence of actions you took, with timestamps and context.
-2. Identify gaps in enumeration, validation, and exploitation steps.
-3. Compare your current approach against a more disciplined, repeatable process.
-4. Build habits around structured recon, targeted testing, and clean post‑exploitation.
-5. Reduce trial‑and‑error by pointing out repeated or low‑value actions.
+- **CTF learners** preparing for OSCP, CPTS, or other hands-on certifications
+- **Pentesters** who want to refine their methodology under pressure
+- **Self-taught security professionals** who need structured feedback without a course
+- **Anyone** who wants to turn chaotic terminal activity into a clear, repeatable workflow
 
-## Example Report Value
-The AI report is designed to feel like a strict mentor review. It breaks down your session line‑by‑line, highlights repeated mistakes, and provides a corrected workflow with better commands and sequencing. For learners preparing for OSCP or CPTS, this is especially valuable because it turns raw command history into a clear methodology review and a reusable playbook.
+---
 
-## How AI Is Used
-Brief uses an AI model to read your recorded command log and generate a detailed, step‑by‑step analysis. It:
-1. Highlights mistakes and weak assumptions.
-2. Suggests better commands and sequencing.
-3. Explains reasoning so you can learn and avoid repeating errors.
-4. Produces a mentor‑style critique with actionable corrections.
-5. Outputs a clean Markdown + HTML report you can review or share.
+##   Why Brief Matters
 
-The AI output is saved as:
-1. A Markdown report for easy reading.
-2. An HTML report for a polished, shareable summary.
+After solving a CTF box, you ask: *"Was there a cleaner way? Did I just get lucky? What bad habits did I expose?"*
 
-## Quick Start Guide
-When you’re preparing for OSCP, CPTS, or any hands‑on security exam, one question comes up after you solve a box:
+Walkthroughs show you *how others* solved it. Brief shows you *how you* approach problems—the gaps in your enumeration, where you chased noise, what you already knew but missed, and what habits slow you down under exam pressure.
 
-“Was there a cleaner way to do this — or did I just get lucky?”
+### Example Value
 
-Brief is built for that exact gap. Not to tell you how to solve boxes, but to help you understand how you think while solving them.
+Instead of just "you got the flag," Brief tells you:
 
-After a box, most people read a walkthrough and try to copy the author’s methodology. That helps, but it hides something important: your own footprint. Where you went into rabbit holes. What you ignored. What you brute‑forced instead of reasoning. What patterns you consistently miss.
+> "You ran four different nmap scans without saving output and missed two open ports until the third run. You guessed at LFI payloads instead of discovering injectable parameters. You ran your reverse shell without testing it first, and you didn't inspect the sudo script before executing it. Here's what a disciplined workflow looks like..."
 
-Brief analyzes your command history step by step and reflects it back to you like a strict but helpful mentor. It shows you:
-1. Where your methodology broke down.
-2. Where you chased noise instead of signal.
-3. Where you already had enough information but didn’t recognize it.
-4. What habits slow you down under exam pressure.
+**That's how you build real methodology.**
 
-This is how you build a strong, repeatable methodology — not by memorizing exploits, but by refining decision‑making.
+---
 
-Over time, Brief gives you something walkthroughs never can: a clear view of how you approach problems, not just how others solved them.
+## 📋 Quick Start
 
-## Installation
-1. Download the script
+### 1. Install
+
 ```bash
 git clone https://github.com/doany1/brief.git
 cd brief
-chmod +x requirement.sh
-./requirement.sh
+chmod +x requirements.sh
+ ./requirements.sh
 ```
 
-2. Move to PATH (optional)
+### If `requirements.sh` doesn't work:
+
 ```bash
-echo $PATH
-sudo mv brief.py /usr/local/bin/brief
+python3 -m pip install --upgrade pip
+python3 -m pip install openai
 ```
+now rerun `./requirements.sh`
 
-3. Get Hugging Face API token
+### 2. Get a Hugging Face API Token
+
 1. Visit: https://huggingface.co/settings/tokens
 2. Click "New token"
-3. Click "Read"
+3. Select "Read" permissions
 4. Click "Create Token"
 5. Copy the token (starts with `hf_`)
 
-4. Set your API token
+### 3. Set Your Token
+
 ```bash
 export HF_TOKEN=hf_xxxxxxxxxxxxxxxxx
 ```
 
-5. Make it permanent (optional)
-```bash
-echo 'export HF_TOKEN=hf_xxxxxxxxxxxxxxxxx' >> ~/.bashrc
-source ~/.bashrc
-```
+## 🔧 Basic Commands
 
-## Basic Commands
-1. Start recording a session
+### Start a new session
+
 ```bash
 brief --start
 ```
 
-2. List the most recent session
+
+### Stop a session
+
+```bash
+brief --stop
+```
+
+### List your most recent session
+
 ```bash
 brief --list
 ```
 
-3. Analyze the most recent session
+Outputs the full path of the latest session file.
+
+### if you want to use existing session
+
+```bash
+brief --use <session name>
+```
+
+### Analyze a session (ingesting)
+
+```bash
+brief --ingest ~/.brief/sessions/htb-example-box.md
+```
+
+Sends the session to the AI model and generates reports.
+
+### ingest the most recent session:
+
 ```bash
 brief --latest
 ```
 
-4. Analyze a specific session
-```bash
-brief --ingest ~/.brief/sessions/session-name.md
-```
+### View help
 
-5. View help
 ```bash
 brief --help
 ```
 
-6. Check version
-```bash
-brief --version
-```
 
-## File Locations
-All data stored in `~/.brief/`:
-```text
+
+## 📁 File Structure
+
+All data is stored in `~/.brief/`:
+
+```
 ~/.brief/
-├── sessions/           # Your command logs
-│   └── session-name.md
-└── outputs/            # AI analysis reports
-    └── session-name.analysis.md
+├── sessions/
+│   ├── htb-example-box.md          # Your raw command log
+│   ├── htb-another-box.md
+│   └── ...
+├── outputs/
+│   ├── htb-example-box.analysis.md # AI analysis (Markdown)
+│   ├── htb-example-box.analysis.html # AI analysis (HTML)
+│   ├── htb-another-box.analysis.md
+│   └── ...
+├── .brief_bashrc                   # Internal shell config
+├── .current_session                # Pointer to active session
+└── autoattach.sh                   # Auto-attach hook (optional)
 ```
 
-## Quick Workflow
+---
+
+## 🚀 Workflow Example
+
+### 1. Start your challenge
+
 ```bash
-# 1. Start recording
 brief --start
-Enter name for file: htb-example-box
-
-# 2. Work on your challenge
-# ... do your work ...
-
-# 3. Stop recording
-exit
-
-# 4. Get AI analysis
-brief --latest
-
-# 5. Read the analysis
-cat ~/.brief/outputs/htb-example-box.analysis.md
+# Enter name: htb-mysql-injection
+# New shell opens, recording begins
 ```
 
+### 2. Do your work (open a new tab or terminal it can save all history until you type `brief --stop`)
+### for example From here you started sloving a box⬇️⬇️
+```bash
+# Recon
+nmap -sS -sV -p- 10.10.10.20
 
-Commands not recording?
-1. Make sure you started with `brief --start`.
-2. Work within that shell session (or `brief --use` in a new tab).
+# Enumeration
+curl http://10.10.10.20
+gobuster dir -u http://10.10.10.20 -w /usr/share/wordlists/dirb/common.txt
 
-Analysis incomplete?
-1. Ensure the full session was recorded.
-2. Check that you have internet access for API calls.
+# Exploitation
+curl http://10.10.10.20/?page=../../../../etc/passwd
 
-## Privacy & Security
-1. All session data is stored locally on your machine.
-2. Data is only sent to Hugging Face when you run `--ingest` or `--latest`.
-3. Your API token is used only to authenticate with Hugging Face.
-4. Review session files before ingesting if they contain sensitive data.
+# Reverse shell
+nc -lvnp 4444
+curl http://10.10.10.20/?cmd=bash+-i+...
+
+# Post-exploitation
+linpeas.sh
+sudo -l
+cat /root/root.txt
+```
+### and here you get root and you want to stop saving history ⬆️⬆️
+
+# Then just Type when done
+```bash
+brief --stop
+```
+
+### 3. Get analysis
+
+```bash
+brief --latest
+```
+### OR 
+
+```bash
+brief -i <~/.brief/sessions/htb-mysql-injection.md> (When you end a session, it shows the location of the stored session file.use that session file,)
+```
+The tool:
+- Queries the AI model (takes ~30-60 seconds)
+- It Generates `htb-mysql-injection.analysis.md` (Markdown) (you can open in any text editor)
+- It Generates `htb-mysql-injection.analysis.html` (styled HTML) (you can open this using firefox or chrome)
+
+### 4. Read the report
+
+```bash
+# Plain text
+cat ~/.brief/outputs/htb-mysql-injection.analysis.md
+
+# Or open in browser
+firefox ~/.brief/outputs/htb-mysql-injection.analysis.html
+```
+
+---
+
+## 📊 What the Analysis Includes
+
+Brief's AI mentor will:
+
+1. **Identify mistakes** – Scans repeated without output saved, blind payload guessing, unverified assumptions
+2. **Highlight patterns** – "You always run nmap four times" or "You skip the LFI enumeration step"
+3. **Explain reasoning** – Why a technique was weak and what it reveals about your approach
+4. **Suggest better commands** – Exact replacements with proper flags, encoding, and output redirection
+5. **Provide a refined workflow** – A complete, copy-paste-ready methodology for the next box
+6. **Test strategy** – How to validate payloads before committing (always test with `id` first)
+
+Example snippet from a report:
+
+> **Nmap Scans:** You ran four different nmap commands without saving output and re-scanned the same ports multiple times. Better: one quick sweep (`nmap -sS -p- --min-rate 2000`), then a single detailed scan (`nmap -sS -sV -sC -p <open-ports>`), then targeted vuln scripts. Always use `-oA <basename>` to save results.
+
+---
+
+## 🔒 Privacy & Security
+
+- **Local storage**: All session files are stored on your machine in `~/.brief/`
+- **Selective transmission**: Data is sent to Hugging Face *only* when you run `--ingest` or `--latest` to create report on your history.  
+- **API token**: Used only to authenticate with Hugging Face; never stored locally
+---
+
+## 🛠 Troubleshooting
+
+### Commands not recording?
+
+1. Make sure you started with `brief --start` (not `--use`)
+2. Verify you're in the shell that was opened by Brief
+
+### Commands are recording but analysis is empty or slow?
+
+1. Ensure you have internet access
+2. Check that `HF_TOKEN` is set: `echo $HF_TOKEN`
+3. Verify the token is valid (visit https://huggingface.co/settings/tokens)
+4. If the session is very large (1000+ commands), it may take longer
+
+### "No sessions found"
+
+- Run `brief --start` to create a new session first
+- Check that `~/.brief/sessions/` directory exists and contains `.md` files
+
+### API token errors?
+
+1. Double-check the token format: `hf_xxxxxxxxxxxxxxxx...`
+2. Regenerate a new token if needed
+3. Make sure it's set before running `brief --latest`: `echo $HF_TOKEN | head -c 10`
+
+---
+
+## 📖 How AI Analysis Works
+
+Brief uses the Hugging Face API with an open-source LLM (currently `openai/gpt-oss-120b:groq`). When you run `--ingest`:
+
+1. Your session log is read from `~/.brief/sessions/`
+2. The log is sent to the AI model with a prompt asking for a mentor-style critique
+3. The model analyzes your command sequence, identifies mistakes, and suggests improvements
+4. The response is saved as Markdown (`.analysis.md`) and converted to HTML (`.analysis.html`)
+5. No session data is stored on Hugging Face; it's processed and discarded
+
+The AI prompt includes:
+
+> "Roast my command history like a strict but helpful mentor. Point out every mistake, explain why it was wrong, and show me the correct methodology with better commands and workflows."
+
+
+
+**Happy hacking. Build better methodology.**
