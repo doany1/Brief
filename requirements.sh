@@ -12,6 +12,14 @@ else
   echo "[*] Auto-attach hook already present in ${PROFILE}"
 fi
 
+if command -v python3 >/dev/null 2>&1; then
+  python3 -m pip install --upgrade pip >/dev/null 2>&1 || true
+  python3 -m pip install openai >/dev/null 2>&1 || true
+  echo "[+] Installed Python dependency: openai"
+else
+  echo "[!] python3 not found. Install Python 3 and run: python3 -m pip install openai"
+fi
+
 if [ -f "brief.py" ]; then
   sudo cp brief.py /usr/local/bin/brief
   sudo chmod +x /usr/local/bin/brief
