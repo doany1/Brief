@@ -4,6 +4,7 @@ import os
 import argparse
 import subprocess
 import time
+import threading
 import textwrap
 import shutil
 from pathlib import Path
@@ -712,23 +713,41 @@ def ingest_session(path):
         print("[-] File not found")
         sys.exit(1)
 
+    check_hf_token()
+
     session_text = path.read_text(errors="ignore")
     prompt = PROMPT_TEMPLATE.replace("{{SESSION}}", session_text)
 
-    print("[*] Ingesting data...")
-    for pct in range(0, 101, 10):
-        bar = "#" * (pct // 10) + "-" * (10 - (pct // 10))
-        sys.stdout.write(f"\r    [{bar}] {pct}%")
-        sys.stdout.flush()
-        if pct < 100:
-            time.sleep(1)
-    print()
+    stop_event = threading.Event()
+    progress_started = {"value": False}
+
+    def progress_bar():
+        time.sleep(0.4)
+        if stop_event.is_set():
+            return
+        progress_started["value"] = True
+        print("[*] Ingesting data...")
+        for pct in range(0, 101, 10):
+            if stop_event.is_set():
+                break
+            bar = "#" * (pct // 10) + "-" * (10 - (pct // 10))
+            sys.stdout.write(f"\r    [{bar}] {pct}%")
+            sys.stdout.flush()
+            if pct < 100:
+                time.sleep(1)
+        if progress_started["value"]:
+            print()
+
+    progress_thread = threading.Thread(target=progress_bar, daemon=True)
+    progress_thread.start()
 
     client = get_client()
     completion = client.chat.completions.create(
         model=MODEL,
         messages=[{"role": "user", "content": prompt}],
     )
+    stop_event.set()
+    progress_thread.join()
 
     output = completion.choices[0].message.content
     out_file = OUT_DIR / f"{path.stem}.analysis.md"
@@ -778,58 +797,77 @@ def ingest_latest_session():
 # =========================
 
 def help_lines():
-    arrow = _arrow()
-    bullet = "•" if _supports_unicode() else "*"
     return [
-        "usage: brief [-h] [--version]",
-        "       (--start | -u SESSION_FILE | -l | --tail [N] | -i SESSION_FILE | --latest)",
+        "brief — record and analyze CTF / lab command history",
         "",
-        "Record CTF / lab command history and generate a detailed post-mortem analysis.",
-        "Use one action per run: start a new session, reuse a session file, list the current",
-        "session, tail its recent commands, or analyze a session.",
+        "Usage:",
+        "  brief [-h] [--version]",
+        "        (--start | --use SESSION_FILE | --list | --tail [N] |",
+        "         --ingest SESSION_FILE | --latest)",
         "",
-        "Quick start:",
-        "  brief --start",
-        "  # ...run commands in your terminal...",
-        "  brief --latest",
+        "Description:",
+        "  Records terminal commands during CTFs or labs and generates",
+        "  a detailed post-mortem analysis. Only one action may be used",
+        "  per run.",
         "",
         "Workflow:",
-        f"  start  {arrow}  record commands  {arrow}  ingest / latest  {arrow}  report",
+        "  start → record commands → ingest / latest → report",
         "",
-        "Session files:",
-        f"  {bullet} Markdown (.md)",
-        f"  {bullet} Append-only",
-        f"  {bullet} Safe to edit manually",
-        f"  {bullet} One command per line with timestamps",
+        "Options:",
+        "  -h, --help",
+        "      Show this help message and exit",
+        "",
+        "  --version",
+        "      Show program version and exit",
+        "",
+        "  --start",
+        "      Start a new command recording session",
+        "",
+        "  -u SESSION_FILE, --use SESSION_FILE",
+        "      Append this terminal’s history to an existing session file",
+        "      (does not start a new session)",
+        "",
+        "  -l, --list",
+        "      Print the full path of the most recent session file",
+        "",
+        "  --tail [N]",
+        "      Show the last N lines of the most recent session",
+        "      (default: 20)",
+        "",
+        "  -i SESSION_FILE, --ingest SESSION_FILE",
+        "      Analyze a specific session file",
+        "",
+        "  --latest",
+        "      Analyze the most recent session (requires an existing session)",
+        "",
+        "Session Files:",
+        "  - Markdown (.md)",
+        "  - Append-only",
+        "  - Safe to edit manually",
+        "  - One command per line with timestamps",
         "",
         "Environment:",
-        "  HF_TOKEN    Hugging Face API token (required for analysis)",
-        "",
-        "options:",
-        "  -h, --help            show this help message and exit",
-        "  --version             show program's version number and exit",
-        "  --start               start a new command recording session",
-        "  -u SESSION_FILE, --use SESSION_FILE",
-        "                        append a new terminal's history to an existing session file",
-        "  -l, --list            print the most recent session file (full path)",
-        "  --tail [N]            print the last N lines of the most recent session (default: 20)",
-        "  -i SESSION_FILE, --ingest SESSION_FILE",
-        "                        analyze a specific session file",
-        "  --latest              analyze the most recent session",
-        "",
-        "Notes:",
-        f"  {bullet} Only one action flag allowed per run",
-        f"  {bullet} --use does not start a new session",
-        f"  {bullet} --latest requires an existing session",
+        "  HF_TOKEN",
+        "      Hugging Face API token (required for analysis)",
         "",
         "Examples:",
-        f"  brief --start                    {arrow} start a new recording session",
-        f"  brief --list                     {arrow} print the most recent session path",
-        f"  brief --tail 50                  {arrow} print the last 50 lines",
-        f"  brief --use (brief --list)       {arrow} attach a new terminal to latest",
-        f"  brief --use ladder.md            {arrow} attach a new terminal to ladder.md",
-        f"  brief --latest                   {arrow} analyze the most recent session",
-        f"  brief --ingest ladder.md         {arrow} analyze a specific session file",
+        "  brief --start",
+        "      Start a new recording session",
+        "",
+        "  brief --list",
+        "      Show the most recent session path",
+        "",
+        "  brief --tail 50",
+        "      Show the last 50 commands",
+        "",
+        "  brief --use ladder.md",
+        "      Attach this terminal to ladder.md",
+        "",
+        "  brief --latest",
+        "      Analyze the most recent session",
+        "",
+        "  brief --ingest ladder.md",
+        "      Analyze a specific session file",
     ]
 
 class BriefArgumentParser(argparse.ArgumentParser):
