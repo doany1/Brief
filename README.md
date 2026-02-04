@@ -64,7 +64,8 @@ Over time, Brief gives you something walkthroughs never can: a clear view of how
 ```bash
 git clone https://github.com/doany1/brief.git
 cd brief
-chmod +x brief.py
+chmod +x requirement.sh
+./requirement.sh
 ```
 
 2. Move to PATH (optional)
