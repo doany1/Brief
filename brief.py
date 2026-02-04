@@ -28,6 +28,7 @@ SESS_DIR = BASE_DIR / "sessions"
 OUT_DIR = BASE_DIR / "outputs"
 CURRENT_SESSION_FILE = BASE_DIR / ".current_session"
 AUTO_ATTACH_HOOK = BASE_DIR / "autoattach.sh"
+STOP_FILE = BASE_DIR / ".stop"
 
 HF_BASE_URL = "https://router.huggingface.co/v1"
 MODEL = "openai/gpt-oss-120b:groq"
@@ -428,6 +429,7 @@ if [ -n "$BRIEF_AUTO_ATTACHED" ]; then return; fi
 if [ ! -f "{CURRENT_SESSION_FILE}" ]; then return; fi
 BRIEF_LOG_PATH="$(cat "{CURRENT_SESSION_FILE}")"
 if [ -z "$BRIEF_LOG_PATH" ] || [ ! -f "$BRIEF_LOG_PATH" ]; then return; fi
+if [ -f "{STOP_FILE}" ]; then return; fi
 
 BRIEF_TERM_LABEL="$(awk '/^# terminal /{{print $3}}' "$BRIEF_LOG_PATH" | tail -n 1)"
 if [ -z "$BRIEF_TERM_LABEL" ]; then
@@ -451,6 +453,7 @@ __brief_log() {{
   RET=$?;
   CMD=$(history 1 | sed "s/^ *[0-9]\\+ *//");
   [ -z "$CMD" ] && return;
+  if [ -f "{STOP_FILE}" ]; then return; fi
   case "$CMD" in
     PROMPT_COMMAND=__brief_log*|*__brief_log*|history\\ -c* ) return ;;
   esac
@@ -557,6 +560,7 @@ def get_client():
 def start_session():
     ensure_dirs()
     write_autoattach_hook()
+    STOP_FILE.unlink(missing_ok=True)
 
     name = input("Session name: ").strip()
     if not name:
@@ -580,6 +584,7 @@ def start_session():
         "  RET=$?;\n"
         "  CMD=$(history 1 | sed \"s/^ *[0-9]\\+ *//\");\n"
         "  [ -z \"$CMD\" ] && return;\n"
+        f"  if [ -f \"{STOP_FILE}\" ]; then return; fi;\n"
         "  case \"$CMD\" in\n"
         "    PROMPT_COMMAND=__brief_log*|*__brief_log*|history\\ -c* ) return ;;\n"
         "  esac\n"
@@ -625,6 +630,7 @@ def _next_terminal_index(log_file):
 def use_session(path):
     ensure_dirs()
     write_autoattach_hook()
+    STOP_FILE.unlink(missing_ok=True)
     log_file = Path(path)
 
     if not log_file.exists():
@@ -647,6 +653,7 @@ def use_session(path):
         "  RET=$?;\n"
         "  CMD=$(history 1 | sed \"s/^ *[0-9]\\+ *//\");\n"
         "  [ -z \"$CMD\" ] && return;\n"
+        f"  if [ -f \"{STOP_FILE}\" ]; then return; fi;\n"
         "  case \"$CMD\" in\n"
         "    PROMPT_COMMAND=__brief_log*|*__brief_log*|history\\ -c* ) return ;;\n"
         "  esac\n"
@@ -672,6 +679,25 @@ def use_session(path):
 
     rcfile.unlink(missing_ok=True)
     print(f"[+] Session updated: {log_file}")
+
+# =========================
+# STOP SESSION
+# =========================
+
+def stop_session():
+    ensure_dirs()
+    STOP_FILE.write_text(utc_now())
+
+    log_path = os.environ.get("BRIEF_LOG")
+    term_label = os.environ.get("BRIEF_TERM_LABEL")
+    if log_path:
+        log_file = Path(log_path)
+        if log_file.exists() and term_label:
+            with open(log_file, "a") as f:
+                f.write(f"# terminal {term_label} ended {utc_now()}\n")
+
+    CURRENT_SESSION_FILE.unlink(missing_ok=True)
+    print("[+] Recording stopped for this session")
 
 # =========================
 # LIST
@@ -803,7 +829,7 @@ def help_lines():
         "Usage:",
         "  brief [-h] [--version]",
         "        (--start | --use SESSION_FILE | --list | --tail [N] |",
-        "         --ingest SESSION_FILE | --latest)",
+        "         --ingest SESSION_FILE | --latest | --stop)",
         "",
         "Description:",
         "  Records terminal commands during CTFs or labs and generates",
@@ -840,6 +866,9 @@ def help_lines():
         "  --latest",
         "      Analyze the most recent session (requires an existing session)",
         "",
+        "  --stop",
+        "      Stop recording the current session in this shell",
+        "",
         "Session Files:",
         "  - Markdown (.md)",
         "  - Append-only",
@@ -868,6 +897,9 @@ def help_lines():
         "",
         "  brief --ingest ladder.md",
         "      Analyze a specific session file",
+        "",
+        "  brief --stop",
+        "      Stop recording in this shell",
     ]
 
 class BriefArgumentParser(argparse.ArgumentParser):
@@ -896,6 +928,7 @@ def main():
             "  brief --use ladder.md            -> attach a new terminal to ladder.md\n"
             "  brief --latest                   -> analyze the most recent session\n"
             "  brief --ingest ladder.md         -> analyze a specific session file\n"
+            "  brief --stop                     -> stop recording in this shell\n"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -910,6 +943,7 @@ def main():
     group.add_argument("--tail", nargs="?", const=20, type=int, metavar="N", help="print the last N lines of the most recent session (default: 20)")
     group.add_argument("-i", "--ingest", metavar="SESSION_FILE", help="analyze a specific session file")
     group.add_argument("--latest", action="store_true", help="analyze the most recent session")
+    group.add_argument("--stop", action="store_true", help="stop recording the current session")
 
     args = parser.parse_args()
 
@@ -925,6 +959,8 @@ def main():
         ingest_session(args.ingest)
     elif args.latest:
         ingest_latest_session()
+    elif args.stop:
+        stop_session()
 
 if __name__ == "__main__":
     main()
