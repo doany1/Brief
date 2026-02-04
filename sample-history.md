@@ -44,7 +44,8 @@
 2026-01-28T20:56:45Z	0	/home/user	cat backup.sh
 
 2026-01-28T20:58:15Z	0	/home/user	sudo -l
-```
+
 2026-01-28T20:59:40Z	0	/home/user	sudo /opt/backup.sh
 
 2026-01-28T21:01:10Z	0	/root	cat /root/root.txt
+```
