@@ -154,7 +154,7 @@ All data is stored in `~/.brief/`:
 │   └── ...
 ├── .brief_bashrc                   # Internal shell config
 ├── .current_session                # Pointer to active session
-└── autoattach.sh                   # Auto-attach hook (optional)
+└── autoattach.sh                   # Auto-attach hook 
 ```
 
 ---
@@ -256,6 +256,7 @@ Example snippet from a report:
 ## 🛠 Troubleshooting
 ## hugging face api token not found
 <img width="1120" height="845" alt="image" src="https://github.com/user-attachments/assets/0428e635-2dd6-43c9-8465-7761ce1071ba" />
+
 ### Commands not recording?
 
 1. Make sure you started with `brief --start` (not `--use`)
