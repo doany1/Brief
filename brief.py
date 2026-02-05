@@ -890,7 +890,7 @@ def help_lines():
         "      Show the last 50 commands",
         "",
         "  brief --use <full path of saved session>",
-        "      it use give file to store history.(e.g You are solving a machine or doing work that takes two days. On day one, you don’t save the history. On day two, you continue saving the history in the same file without creating a new file. )",
+        "      it use that same file to store history.(e.g You are solving a machine or doing work that takes two days. On day one, you don’t save the history. On day two, you continue saving the history in the same file without creating a new file. )",
         "",
         "  brief --latest",
         "      Analyze the most recent session",
