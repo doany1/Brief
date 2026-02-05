@@ -249,7 +249,7 @@ Example snippet from a report:
 - **API token**: Used only to authenticate with Hugging Face; never stored locally
 ---
 ## screenshots
-<img width="1847" height="1011" alt="image" src="https://github.com/user-attachments/assets/8da2d9d8-0f3e-458a-84ff-315ecdf1a884" />
+<img width="1849" height="1011" alt="image" src="https://github.com/user-attachments/assets/7cf2f111-b03f-453a-ad74-7c004fff47c3" />
 <img width="1919" height="1028" alt="image" src="https://github.com/user-attachments/assets/d6827bd2-6b1f-4a47-b87a-c6574494b4a1" />
 <img width="1918" height="934" alt="image" src="https://github.com/user-attachments/assets/8a77f111-95ee-4fcf-86d6-d9505d2a97ba" />
 
