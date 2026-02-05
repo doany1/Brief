@@ -250,6 +250,7 @@ Example snippet from a report:
 ---
 ## screenshots
 <img width="1849" height="1011" alt="image" src="https://github.com/user-attachments/assets/7cf2f111-b03f-453a-ad74-7c004fff47c3" />
+<img width="1744" height="942" alt="image" src="https://github.com/user-attachments/assets/dadeb9f9-0d4c-40e3-b785-27410ef94b5a" />
 <img width="1919" height="1028" alt="image" src="https://github.com/user-attachments/assets/d6827bd2-6b1f-4a47-b87a-c6574494b4a1" />
 <img width="1918" height="934" alt="image" src="https://github.com/user-attachments/assets/8a77f111-95ee-4fcf-86d6-d9505d2a97ba" />
 
