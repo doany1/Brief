@@ -51,8 +51,14 @@ Instead of just "you got the flag," Brief tells you:
 
 ```bash
 git clone https://github.com/doany1/brief.git
+```
+```bash
 cd brief
+```
+```bash
 chmod +x requirements.sh
+```
+```bash
  ./requirements.sh
 ```
 
