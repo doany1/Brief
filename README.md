@@ -240,6 +240,10 @@ Example snippet from a report:
 - **Selective transmission**: Data is sent to Hugging Face *only* when you run `--ingest` or `--latest` to create report on your history.  
 - **API token**: Used only to authenticate with Hugging Face; never stored locally
 ---
+## screenshots
+<img width="1120" height="845" alt="image" src="https://github.com/user-attachments/assets/0428e635-2dd6-43c9-8465-7761ce1071ba" />
+<img width="1919" height="1028" alt="image" src="https://github.com/user-attachments/assets/d6827bd2-6b1f-4a47-b87a-c6574494b4a1" />
+<img width="1918" height="934" alt="image" src="https://github.com/user-attachments/assets/8a77f111-95ee-4fcf-86d6-d9505d2a97ba" />
 
 ## 🛠 Troubleshooting
 
