@@ -66,6 +66,8 @@ chmod +x requirements.sh
 
 ```bash
 python3 -m pip install --upgrade pip
+```
+```bash
 python3 -m pip install openai
 ```
 now rerun `./requirements.sh`
