@@ -108,13 +108,15 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
             font-weight: 800;
             letter-spacing: -1px;
             line-height: 1.1;
+            color: #ffffff;
         }
         
         .report-header p {
             font-size: 1.4em;
-            opacity: 0.85;
+            opacity: 1;
             font-weight: 400;
             letter-spacing: 0.5px;
+            color: #ffffff;
         }
         
         .report-content {
@@ -602,14 +604,18 @@ def start_session():
     env["BRIEF_LOG"] = str(log_file)
     env["BRIEF_TERM_LABEL"] = "1"
 
-    print("[+] Recording session (type `exit` to stop)\n")
+    print("[+] Recording session (type `brief --stop` to stop; enter from any terminal or tab)\n")
     subprocess.run(["bash", "--rcfile", str(rcfile)], env=env)
 
     with open(log_file, "a") as f:
         f.write(f"# terminal 1 ended {utc_now()}\n")
 
     rcfile.unlink(missing_ok=True)
-    print(f"[+] Session saved: {log_file}")
+    if STOP_FILE.exists():
+        print(f"[+] Recording already stopped for this {log_file.stem}")
+        print(f"[+] Session file: {log_file}")
+    else:
+        print(f"[*] Terminal closed. Recording still active for {log_file.stem}.")
 
 # =========================
 # USE EXISTING SESSION
@@ -671,14 +677,18 @@ def use_session(path):
     env["BRIEF_LOG"] = str(log_file)
     env["BRIEF_TERM_LABEL"] = str(term_index)
 
-    print(f"[+] Using existing session (terminal {term_index}) (type `exit` to stop)\n")
+    print(f"[+] Using existing session (terminal {term_index}) (type `brief --stop` to stop; enter from any terminal or tab)\n")
     subprocess.run(["bash", "--rcfile", str(rcfile)], env=env)
 
     with open(log_file, "a") as f:
         f.write(f"# terminal {term_index} ended {utc_now()}\n")
 
     rcfile.unlink(missing_ok=True)
-    print(f"[+] Session updated: {log_file}")
+    if STOP_FILE.exists():
+        print(f"[+] Recording already stopped for this {log_file.stem}")
+        print(f"[+] Session file: {log_file}")
+    else:
+        print(f"[*] Terminal closed. Recording still active for {log_file.stem}.")
 
 # =========================
 # STOP SESSION
@@ -686,18 +696,33 @@ def use_session(path):
 
 def stop_session():
     ensure_dirs()
+    if not CURRENT_SESSION_FILE.exists():
+        latest = None
+        files = sorted(SESS_DIR.glob("*.md"))
+        if files:
+            latest = max(files, key=lambda p: p.stat().st_mtime)
+        if latest:
+            print(f"[-] No session to stop. Most recent session '{latest.stem}' already stopped.")
+        else:
+            print("[-] No session to stop. No sessions found.")
+        return
+
     STOP_FILE.write_text(utc_now())
 
-    log_path = os.environ.get("BRIEF_LOG")
+    log_path = CURRENT_SESSION_FILE.read_text(errors="ignore").strip()
+    log_file = Path(log_path) if log_path else None
+
     term_label = os.environ.get("BRIEF_TERM_LABEL")
-    if log_path:
-        log_file = Path(log_path)
-        if log_file.exists() and term_label:
-            with open(log_file, "a") as f:
-                f.write(f"# terminal {term_label} ended {utc_now()}\n")
+    if log_file and log_file.exists() and term_label:
+        with open(log_file, "a") as f:
+            f.write(f"# terminal {term_label} ended {utc_now()}\n")
 
     CURRENT_SESSION_FILE.unlink(missing_ok=True)
-    print("[+] Recording stopped for this session")
+
+    session_name = log_file.stem if log_file else "session"
+    print(f"[+] Recording stopped for this {session_name}")
+    if log_file:
+        print(f"[+] Session file: {log_file}")
 
 # =========================
 # LIST
@@ -804,7 +829,8 @@ def ingest_session(path):
         f"  firefox {html_file}",
         f"  google-chrome {html_file}",
     ]
-    print_box(lines)
+    box_width = max(BOX_INNER_WIDTH, max((len(l) for l in lines if l), default=BOX_INNER_WIDTH))
+    print_box(lines, width=box_width)
 
 def ingest_latest_session():
     ensure_dirs()
@@ -850,8 +876,11 @@ def help_lines():
         "      Start a new command recording session",
         "",
         "  -u SESSION_FILE, --use SESSION_FILE",
-        "      Append this terminal’s history to an existing session file",
-        "      (does not start a new session)",
+        "      brief --use <full path of saved session>",
+        "      it use that same file to store history.(e.g You are solving a machine or",
+        "      doing work that takes two days. On day one, you don’t save the history.",
+        "      On day two, you continue saving the history in the same file without",
+        "      creating a new file.)",
         "",
         "  -l, --list",
         "      Print the full path of the most recent session file",
@@ -890,7 +919,10 @@ def help_lines():
         "      Show the last 50 commands",
         "",
         "  brief --use <full path of saved session>",
-        "      it use that same file to store history.(e.g You are solving a machine or doing work that takes two days. On day one, you don’t save the history. On day two, you continue saving the history in the same file without creating a new file. )",
+        "      it use that same file to store history.(e.g You are solving a machine or",
+        "      doing work that takes two days. On day one, you don’t save the history.",
+        "      On day two, you continue saving the history in the same file without",
+        "      creating a new file.)",
         "",
         "  brief --latest",
         "      Analyze the most recent session",
