@@ -250,12 +250,12 @@ Example snippet from a report:
 ---
 ## screenshots
 <img width="1847" height="1011" alt="image" src="https://github.com/user-attachments/assets/8da2d9d8-0f3e-458a-84ff-315ecdf1a884" />
-<img width="1120" height="845" alt="image" src="https://github.com/user-attachments/assets/0428e635-2dd6-43c9-8465-7761ce1071ba" />
 <img width="1919" height="1028" alt="image" src="https://github.com/user-attachments/assets/d6827bd2-6b1f-4a47-b87a-c6574494b4a1" />
 <img width="1918" height="934" alt="image" src="https://github.com/user-attachments/assets/8a77f111-95ee-4fcf-86d6-d9505d2a97ba" />
 
 ## 🛠 Troubleshooting
-
+## hugging face api token not found
+<img width="1120" height="845" alt="image" src="https://github.com/user-attachments/assets/0428e635-2dd6-43c9-8465-7761ce1071ba" />
 ### Commands not recording?
 
 1. Make sure you started with `brief --start` (not `--use`)
