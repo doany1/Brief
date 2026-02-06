@@ -109,7 +109,7 @@ brief --list
 
 Outputs the full path of the latest session file.
 
-### if you want to use existing session
+### if you want to use existing session to save new history then use
 
 ```bash
 brief --use <session name>
