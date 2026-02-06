@@ -115,7 +115,7 @@ Outputs the full path of the latest session file.
 brief --use <session name>
 ```
 
-### Analyze a session (ingesting)
+### Analyze a session (ingesting) [this will give you detailed report in html and .md]
 
 ```bash
 brief --ingest ~/.brief/sessions/htb-example-box.md
