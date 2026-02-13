@@ -1,13 +1,13 @@
 # Brief – Sharpen your pentest methodology.
 
-**Sharpen your CTF and penetration testing methodology by capturing, analyzing, and learning from every command you execute.**
+**By capturing, analyzing, and learning from every command you execute.**
 
 **`Brief is a command-line tool` that records your terminal activity during CTF challenges or lab exercises and leverages AI to
 produce a structured, in-depth report.**
 
 *It uses a free `Hugging Face account` and the free model `openai/gpt-oss-120b:novita`.*
 
-**Instead of focusing solely on solving the challenge, it evaluates your workflow, decision-making process, and technical approach providing actionable feedback to help you refine and improve your performance over time.**
+*Instead of focusing solely on solving the challenge or Box,* **it evaluates your workflow, decision-making process, and technical approach providing actionable feedback to help you refine and improve your performance over time.**
 
 ## Easy to use
 
@@ -31,15 +31,12 @@ ___
 ___
 
 ##  What It Does
-Most security tools help you find vulnerabilities. **`Brief` helps you fix your methodology.**
+* Most security tools help you find vulnerabilities. **`Brief` helps you fix your methodology.**
 
-It does not:
-1. **Solve the box for you**
-2. **Generate exploits automatically**
-3. **Replace your thinking**
-4. **OR Create a Documentation**
+**It does not:**
+ *Solve the box for you OR Generate exploits automatically OR Replace your thinking OR  Create a Documentation*
 
-Instead, **it analyzes your behavior** 
+* Instead, **it analyzes your behavior** 
 **every command,every repetition,every shortcut**  and evaluates how disciplined, efficient, and reproducible your workflow is.
 
 After each session, `Brief` acts like a **strict but helpful mentor**:
